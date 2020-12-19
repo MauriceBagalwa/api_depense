@@ -1,0 +1,19 @@
+{
+  "name": "api_depense",
+  "version": "1.0.0",
+  "description": "api de l'application de depenses",
+  "main": "app.js",
+  "repository": "https://github.com/MauriceBagalwa/api_depense.git",
+  "author": "Maurice Bagalwa <mauricebagalwa009@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "http-errors": "^1.8.0",
+    "mongoose": "^5.11.8",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.6"
+  }
+}
