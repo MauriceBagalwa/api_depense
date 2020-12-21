@@ -2,10 +2,12 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const morgan = require("morgan");
 const CreatError = require("http-errors");
-require("./src/mongo/utils/db");
 const router = require("./src/routers");
+require("./src/mongo/utils/db");
+require("dotenv").config();
+
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyparser.json());
 app.use(morgan("dev"));
