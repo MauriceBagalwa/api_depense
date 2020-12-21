@@ -3,6 +3,7 @@ const bodyparser = require("body-parser");
 const morgan = require("morgan");
 const CreatError = require("http-errors");
 require("./src/mongo/utils/db");
+const router = require("./src/routers");
 const app = express();
 const PORT = 3000;
 
@@ -12,6 +13,12 @@ app.use(morgan("dev"));
 app.get("/", (req, res) => {
   res.send("Welcome to Depense_App...");
 });
+
+/*
+? @End point
+*/
+app.use("/dep/v1/user", router.userRouter);
+app.use("/dep/v1/entreprise", router.entrepriseRouter);
 /*
 ? Gestionnaire des Erreurs
 */

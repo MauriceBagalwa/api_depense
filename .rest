@@ -1,0 +1,40 @@
+POST http://localhost:3000/dep/v1/user
+Content-Type: application/json
+
+{
+    "lastname":"Bin12",
+    "name":"Maurie3",
+    "genre":"Homme",
+    "email":"mauricebagalwa08@gmail.com",
+    "password":"1234",
+    "entreprise_":"R01267-A",
+    "fonctions":[{"designation":"admin"},{"designation":"comptable"}]
+}
+###
+GET http://localhost:3000/dep/v1/user
+
+/* -------------------------------------------------------------------------- */
+/*                                 Entreprise                                 */
+/* -------------------------------------------------------------------------- */
+
+###
+GET http://localhost:3000/dep/v1/entreprise
+###
+POST http://localhost:3000/dep/v1/entreprise
+Content-Type: application/json
+
+{
+    "name":"SmartTicker",
+    "rccm":"387-4890-097",
+    "mail":"mauricebagalwa08@gmail.com",
+    "numbers":[{"number":"+243999026735"}],
+    "adresses":[{"adress":"Av bobiladawa N45"}]
+}
+###
+PUT  http://localhost:3000/dep/v1/entreprise
+Content-Type:  application/json
+
+{
+    "_id":"5fddc84173e31h538c0a593de",
+    "mail":"bin243@gmail.com"
+}

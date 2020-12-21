@@ -9,29 +9,32 @@ const reqString = {
 
 const fonctionSchema = new Schema({
   designation: reqString,
-  creatAt: { type: Date, default: Date.now },
 });
 
-const UserSchema = new schema({
-  latsname: reqString,
+const UserSchema = new Schema({
+  lastname: reqString,
   name: reqString,
   genre: reqString,
-  mails: reqString,
+  email: reqString,
+  number: reqString,
   password: reqString,
+  entreprise_: reqString,
   fonctions: [fonctionSchema],
+  etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
 });
 
-UserSchema.pre("Save", async function (next) {
+UserSchema.pre("save", async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = bcrypt.hashSync(this.password, salt);
     this.password = hashedPassword;
+    next();
   } catch (error) {
     next(error);
   }
 });
 
-const User = mongoose.model("user", UserSchema);
+const User = mongoose.model("users", UserSchema);
 
 module.exports = User;
