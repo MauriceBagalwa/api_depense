@@ -33,14 +33,17 @@ module.exports = {
         });
       else {
         // @ init values of body
-        const values = new Entreprise({
+        const entreprise = new Entreprise({
           name: name,
           rccm: rccm,
           mail: mail,
           numbers: numbers,
           adresses: adresses,
         });
-        values
+        if (req.file) {
+          entreprise.avatar = req.file.path;
+        }
+        entreprise
           .save()
           .then(function () {
             res.status(200).json({
