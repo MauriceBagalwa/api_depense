@@ -108,8 +108,8 @@ module.exports = {
                 },
               ],
             }).then((find) => {
-              console.log(user);
-              if (!find)
+              console.log(find);
+              if (find)
                 new UserSchema(user)
                   .save()
                   .then(() => {
