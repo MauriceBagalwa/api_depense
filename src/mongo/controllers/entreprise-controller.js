@@ -72,7 +72,6 @@ module.exports = {
   /* --------------------------- add new entreprise --------------------------- */
   entreprise: (req, res, next) => {
     const { name, rccm, mail, number, adresse, user } = req.body;
-    console.log(req.body);
     Entreprise.findOne({
       $and: [{ created: true }, { $or: [{ name }, { mail }] }],
     }).then((find) => {
@@ -109,6 +108,7 @@ module.exports = {
                 },
               ],
             }).then((find) => {
+              console.log(user);
               if (!find)
                 new UserSchema(user)
                   .save()
