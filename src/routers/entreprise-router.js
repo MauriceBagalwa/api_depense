@@ -3,7 +3,7 @@ const router = require("express").Router();
 const upload=require('../middleware/upload')
 
 router.get("/", entrepriseCtr.entreprisesOperation);
-router.post("/", upload.single('avatar'), entrepriseCtr.entreprise);
+router.post("/", entrepriseCtr.entreprise);
 router.put("/", entrepriseCtr.updateEntreprise);
 
 module.exports = router;
