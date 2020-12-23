@@ -29,7 +29,7 @@ module.exports = {
         fonctions,
       } = req.body;
       const isExist = await User.findOne({ $or: [{ lastname }, { email }] });
-
+      console.log(fonctions);
       if (isExist) {
         res.status(400).json({
           message: "username or email address already exist",
