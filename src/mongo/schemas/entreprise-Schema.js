@@ -17,9 +17,8 @@ const EntrepriseSchema = new Schema({
   name: reqString,
   rccm: reqString,
   mail: reqString,
-  number: NumberSchema,
-  adresse: locationSchema,
-  // avata: { type: String },
+  number: reqString,
+  adresse: reqString,
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
 });
