@@ -25,6 +25,7 @@ module.exports = {
   /* --------------------------- add new entreprise --------------------------- */
   entreprise: (req, res, next) => {
     const { name, rccm, mail, numbers, adresses } = req.body;
+    console.log(req.body);
     Entreprise.findOne({ $or: [{ name }, { mail }] }).then((find) => {
       console.log(find);
       if (find)
@@ -33,17 +34,17 @@ module.exports = {
         });
       else {
         // @ init values of body
-        const entreprise = new Entreprise({
+        const values = new Entreprise({
           name: name,
           rccm: rccm,
           mail: mail,
           numbers: numbers,
           adresses: adresses,
         });
-        if (req.file) {
-          entreprise.avatar = req.file.path;
-        }
-        entreprise
+        // if (req.file) {
+        //   entreprise.avatar = req.file.path;
+        // }
+        values
           .save()
           .then(function () {
             res.status(200).json({
@@ -51,6 +52,7 @@ module.exports = {
             });
           })
           .catch((error) => {
+            console.log(error);
             next(error);
           });
       }
