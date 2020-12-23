@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   number: reqString,
   email: reqString,
   password: reqString,
-  refentreprise: { type: String, default: "TestEnt-0032", required: true },
+  entreprise: { type: String, required: true },
   fonctions: [fonctionSchema],
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
