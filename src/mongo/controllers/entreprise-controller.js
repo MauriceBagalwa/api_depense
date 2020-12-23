@@ -108,16 +108,23 @@ module.exports = {
                   ],
                 },
               ],
+            }).then((find) => {
+              if (!find)
+                new UserSchema(user)
+                  .save()
+                  .then(() => {
+                    const use = module.exports;
+                    use.changeEtat(user.entreprise, res, next);
+                  })
+                  .catch((error) => {
+                    next(error);
+                  });
+              else {
+                res.status(400).json({
+                  message: "Entreprise no Found.",
+                });
+              }
             });
-            new UserSchema(user)
-              .save()
-              .then(() => {
-                const use = module.exports;
-                use.changeEtat(user.entreprise, res, next);
-              })
-              .catch((error) => {
-                next(error);
-              });
           })
           .catch((error) => {
             console.log(error);
