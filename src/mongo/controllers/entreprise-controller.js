@@ -1,4 +1,6 @@
 const Entreprise = require("../schemas/entreprise-Schema");
+const UserSchema = require("../schemas/user-schema");
+
 module.exports = {
   /* --------------------------- get all entreprise --------------------------- */
   /*@1 */
@@ -21,44 +23,6 @@ module.exports = {
         next(error);
       });
   },
-
-  /* --------------------------- add new entreprise --------------------------- */
-  entreprise: (req, res, next) => {
-    const { name, rccm, mail, number, adresse } = req.body;
-    console.log(req.body);
-    Entreprise.findOne({ $or: [{ name }, { mail }] }).then((find) => {
-      console.log(find);
-      if (find)
-        res.status(400).json({
-          message: "Entreprise or email address already exist.",
-        });
-      else {
-        // @ init values of body
-        const values = new Entreprise({
-          name: name,
-          rccm: rccm,
-          mail: mail,
-          number: number,
-          adresse: adresse,
-        });
-        // if (req.file) {
-        //   entreprise.avatar = req.file.path;
-        // }
-        values
-          .save()
-          .then(function () {
-            res.status(200).json({
-              message: "Entreprise create.",
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-            next(error);
-          });
-      }
-    });
-  },
-
   /* ------------------------ update data of entreprise ----------------------- */
   updateEntreprise: (req, res, next) => {
     const values = req.body;
@@ -83,6 +47,72 @@ module.exports = {
       }
     });
   },
+
+  changeEtat: (entreprise, res, next) => {
+    Entreprise.findById((_id = entreprise)).then((find) => {
+      console.log(find);
+      if (find)
+        find
+          .update({ created: true })
+          .then(function () {
+            res.status(400).json({
+              message: "Entreprise created...",
+            });
+          })
+          .catch((error) => {
+            next(error);
+          });
+      else {
+        res.status(400).json({
+          message: "Entreprise not created",
+        });
+      }
+    });
+  },
+  /* --------------------------- add new entreprise --------------------------- */
+  entreprise: (req, res, next) => {
+    const { name, rccm, mail, number, adresse, user } = req.body;
+    console.log(req.body);
+    Entreprise.findOne({
+      $and: [{ created: true }, { $or: [{ name }, { mail }] }],
+    }).then((find) => {
+      console.log(find);
+
+      if (find)
+        res.status(400).json({
+          message: "Entreprise or email address already exist.",
+        });
+      else {
+        const values = new Entreprise({
+          name: name,
+          rccm: rccm,
+          mail: mail,
+          number: number,
+          adresse: adresse,
+        });
+
+        values
+          .save()
+          .then((created) => {
+            user.entreprise = created._id;
+            new UserSchema(user)
+              .save()
+              .then(() => {
+                const use = module.exports;
+                use.changeEtat(user.entreprise, res, next);
+              })
+              .catch((error) => {
+                next(error);
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+            next(error);
+          });
+      }
+    });
+  },
+
   /* ------------------------ Rentre l'entreprise invibles ----------------------- */
   makeInvisible: (req, res, next) => {
     Entreprise.findById(req.body._id)
