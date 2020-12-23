@@ -24,7 +24,7 @@ module.exports = {
 
   /* --------------------------- add new entreprise --------------------------- */
   entreprise: (req, res, next) => {
-    const { name, rccm, mail, numbers, adresses } = req.body;
+    const { name, rccm, mail, number, adresse } = req.body;
     console.log(req.body);
     Entreprise.findOne({ $or: [{ name }, { mail }] }).then((find) => {
       console.log(find);
@@ -38,8 +38,8 @@ module.exports = {
           name: name,
           rccm: rccm,
           mail: mail,
-          numbers: numbers,
-          adresses: adresses,
+          number: number,
+          adresse: adresse,
         });
         // if (req.file) {
         //   entreprise.avatar = req.file.path;
