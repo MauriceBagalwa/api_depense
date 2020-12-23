@@ -10,7 +10,7 @@ const reqString = {
 const fonctionSchema = new Schema({
   designation: reqString,
 });
-const entreprise = "TestEnt-0034";
+const entreprise = "TestEnt-0032";
 const UserSchema = new Schema({
   lastname: reqString,
   name: reqString,
@@ -18,7 +18,7 @@ const UserSchema = new Schema({
   number: reqString,
   email: reqString,
   password: reqString,
-  entreprise_: { tyrpe: String, default: entreprise },
+  refentreprise: { type: String, default: "TestEnt-0032", required: true },
   fonctions: [fonctionSchema],
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
