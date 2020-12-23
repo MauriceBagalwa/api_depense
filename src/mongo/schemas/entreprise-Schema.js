@@ -19,6 +19,7 @@ const EntrepriseSchema = new Schema({
   mail: reqString,
   number: reqString,
   adresse: reqString,
+  created: { type: Boolean, default: false },
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
 });
