@@ -95,6 +95,20 @@ module.exports = {
           .save()
           .then((created) => {
             user.entreprise = created._id;
+
+            UserSchema.find({
+              $and: [
+                { entreprise: user.entreprise },
+                {
+                  $or: [
+                    { email: user.email },
+                    {
+                      $and: [{ lastname: user.lastname }, { name: user.name }],
+                    },
+                  ],
+                },
+              ],
+            });
             new UserSchema(user)
               .save()
               .then(() => {
