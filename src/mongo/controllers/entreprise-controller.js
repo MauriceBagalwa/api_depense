@@ -70,13 +70,12 @@ module.exports = {
     });
   },
   /* --------------------------- add new entreprise --------------------------- */
+
   entreprise: (req, res, next) => {
     const { name, rccm, mail, number, adresse, user } = req.body;
     Entreprise.findOne({
       $and: [{ created: true }, { $or: [{ name }, { mail }] }],
     }).then((find) => {
-      console.log(find);
-
       if (find)
         res.status(400).json({
           message: "Entreprise or email address already exist.",
@@ -95,21 +94,14 @@ module.exports = {
           .then((created) => {
             user.entreprise = created._id;
 
-            UserSchema.find({
-              $and: [
-                { entreprise: user.entreprise },
-                {
-                  $or: [
-                    { email: user.email },
-                    {
-                      $and: [{ lastname: user.lastname }, { name: user.name }],
-                    },
-                  ],
-                },
-              ],
+            UserSchema.findOne({
+              $and: [{ entreprise: user.entreprise }, { email: user.email }],
             }).then((find) => {
-              console.log(find);
-              if (find)
+              if (find) {
+                res.status(400).json({
+                  message: "Entreprise no Found.",
+                });
+              } else {
                 new UserSchema(user)
                   .save()
                   .then(() => {
@@ -119,10 +111,6 @@ module.exports = {
                   .catch((error) => {
                     next(error);
                   });
-              else {
-                res.status(400).json({
-                  message: "Entreprise no Found.",
-                });
               }
             });
           })
