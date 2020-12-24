@@ -55,7 +55,7 @@ module.exports = {
         find
           .update({ created: true })
           .then(function () {
-            res.status(400).json({
+            res.status(200).json({
               message: "Entreprise created...",
             });
           })
