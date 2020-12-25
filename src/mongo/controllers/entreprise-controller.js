@@ -59,13 +59,16 @@ module.exports = {
 
   changeEtat: async (entreprise, res, next) => {
     const find = await Entreprise.findById((_id = entreprise));
-    if (!find) throw createError.NotFound("Entreprise not created");
+    if (!find)
+      res.status(200).json({
+        message: "Entreprise not created",
+      });
     else {
       await find
         .updateOne({ created: true, code: randomFixedInteger(6) })
         .then(function () {
           res.status(200).json({
-            message: "Entreprise created...",
+            find,
           });
         })
         .catch((error) => {
@@ -87,7 +90,6 @@ module.exports = {
         message: "Entreprise or email address already exist.",
       });
     else {
-      
       const entreprise = new Entreprise({
         name: name,
         rccm: rccm,
@@ -104,9 +106,9 @@ module.exports = {
             $and: [{ entreprise: user.entreprise }, { email: user.email }],
           }).then((find) => {
             if (find)
-              throw createError.Conflict(
-                "User or email address already exist."
-              );
+              res.status(400).json({
+                message: "User or email address already exist.",
+              });
             else {
               new UserSchema(user)
                 .save()
