@@ -164,7 +164,10 @@ module.exports = {
           res.status(200).json({
             message: "correct code.",
           });
-        else throw createError.NotFound("Incorrect code.");
+        else
+          res.status(200).json({
+            message: "Incorrect code.",
+          });
       })
       .catch((error) => {
         next(error);
