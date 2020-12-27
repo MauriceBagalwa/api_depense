@@ -113,8 +113,7 @@ module.exports = {
               new UserSchema(user)
                 .save()
                 .then(() => {
-                  const use = module.exports;
-                  use.changeEtat(user.entreprise, res, next);
+                  res.status(200).json(created);
                 })
                 .catch((error) => {
                   next(error);
@@ -163,11 +162,13 @@ module.exports = {
       code: req.query.code,
     })
       .then((verify) => {
-        if (verify)
+        if (verify) {
+          const use = module.exports;
+          use.changeEtat(user.entreprise, res, next);
           res.status(200).json({
             message: "correct code.",
           });
-        else
+        } else
           res.status(400).json({
             message: "Incorrect code.",
           });
@@ -211,7 +212,6 @@ module.exports = {
                 find
                   .updateOne({ mail })
                   .then((updated) => {
-                
                     const values = {
                       to: mail,
                       subject: "Test mail api",
