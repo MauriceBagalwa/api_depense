@@ -157,8 +157,11 @@ module.exports = {
 
   /* ------------------------ verify code confirmation ------------------------ */
   verifyCode: async (req, res, next) => {
-    console.log(req.body);
-    await Entreprise.findOne({ _id: req.body.entreprise, code: req.body.code })
+    console.log(req.query);
+    await Entreprise.findOne({
+      _id: req.query.entreprise,
+      code: req.query.code,
+    })
       .then((verify) => {
         if (verify)
           res.status(200).json({
@@ -173,6 +176,9 @@ module.exports = {
         next(error);
       });
   },
+
+  /* ---------------- Envoir de mail avec code de confirmation ---------------- */
+
   sendEmail: async (req, res, next) => {
     await Entreprise.findOne({ _id: req.body.entreprise }).then((find) => {
       if (find) {
@@ -185,5 +191,51 @@ module.exports = {
         sendEmail(values, res, next);
       } else throw createError.NotFound("Email address not registered.");
     });
+  },
+
+  /* -------------------------- Modification du mail -------------------------- */
+
+  updateMail: async (req, res, next) => {
+    console.log(req.body);
+    const { entreprise, mail } = req.body;
+    await Entreprise.findOne({ _id: entreprise })
+      .then((find) => {
+        if (find) {
+          Entreprise.findOne({ mail })
+            .then((exist) => {
+              if (exist)
+                res.status(400).json({
+                  message: "Email address already exist.",
+                });
+              else {
+                find
+                  .updateOne({ mail })
+                  .then((updated) => {
+                
+                    const values = {
+                      to: mail,
+                      subject: "Test mail api",
+                      message: `Votre code de confirmation est ${find.code}`,
+                    };
+                    console.log(values);
+                    sendEmail(values, res, next);
+                  })
+                  .catch((error) => {
+                    res.status(400).json({
+                      message: "Echec de la modification.",
+                    });
+                  });
+              }
+            })
+            .catch((error) => {
+              res.status(400).json({
+                message: "Echec de la modification.",
+              });
+            });
+        } else throw createError.NotFound("Entreprise not Found.");
+      })
+      .catch((error) => {
+        next(error);
+      });
   },
 };
