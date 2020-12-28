@@ -1,5 +1,7 @@
 const sendmail = require("sendmail");
 const nodemailer = require("nodemailer");
+const Entreprise = require("../schemas/entreprise-Schema");
+const createError = require("http-errors");
 require("dotenv").config();
 
 module.exports = {
@@ -26,5 +28,18 @@ module.exports = {
           message: `Mail send to ${info.response}`,
         });
     });
+  },
+  verifyMailEntreprise: async (req, res, next) => {
+    try {
+      console.log(req.query);
+      const find = Entreprise.findOne({ mail: req.query.mail });
+      if (find) createError.Conflict(`Incorrect mail`);
+      else
+        res.send({
+          message: "Autentique",
+        });
+    } catch (error) {
+      console.log(error);
+    }
   },
 };
