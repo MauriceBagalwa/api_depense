@@ -3,11 +3,11 @@ const router = require("express").Router();
 const upload = require("../middleware/upload");
 
 router.get("/", entrepriseCtr.entreprisesOperation);
-router.get("/code", entrepriseCtr.verifyCode);
 router.get("/mail", entrepriseCtr.sendEmail);
 
 router.post("/", entrepriseCtr.entreprise);
 router.post("/updatemail", entrepriseCtr.updateMail);
+router.post("/code", entrepriseCtr.verifyCode);
 
 router.put("/", entrepriseCtr.updateEntreprise);
 
