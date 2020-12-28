@@ -256,7 +256,7 @@ module.exports = {
   },
   verifyMailEntreprise: async (req, res, next) => {
     try {
-      const { mail } = req.body;
+      const { mail } = req.query;
       const find = await Entreprise.findOne({ mail });
       console.log(mail);
       if (find)
