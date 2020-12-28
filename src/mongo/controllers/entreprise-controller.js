@@ -261,10 +261,12 @@ module.exports = {
       console.log(mail);
       if (find)
         res.send({
+          code: 409,
           message: "mail",
         });
       else
         res.send({
+          code: 200,
           message: "Autentique",
         });
     } catch (error) {
