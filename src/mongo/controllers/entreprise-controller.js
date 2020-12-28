@@ -175,18 +175,15 @@ module.exports = {
 
   /* ------------------------ verify code confirmation ------------------------ */
   verifyCode: async (req, res, next) => {
-    console.log(req.query);
+    console.log(req.body);
     await Entreprise.findOne({
-      _id: req.query.entreprise,
-      code: req.query.code,
+      _id: req.body.entreprise,
+      code: req.body.code,
     })
       .then((verify) => {
         if (verify) {
           const use = module.exports;
-          use.changeEtat(user.entreprise, res, next);
-          res.status(200).json({
-            message: "correct code.",
-          });
+          use.changeEtat(verify._id, res, next);
         } else
           res.status(400).json({
             message: "Incorrect code.",
