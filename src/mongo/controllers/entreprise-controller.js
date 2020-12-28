@@ -126,13 +126,13 @@ module.exports = {
               new UserSchema(user)
                 .save()
                 .then(() => {
-                  res.status(200).json(created);
                   const values = {
                     to: created.mail,
                     subject: "Test mail api",
                     message: `Votre code de confirmation est ${created.code}`,
                   };
                   sendEmail(values, res, next);
+                  res.status(200).json(created);
                 })
                 .catch((error) => {
                   next(error);
