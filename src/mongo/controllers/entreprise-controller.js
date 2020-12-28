@@ -254,4 +254,20 @@ module.exports = {
         next(error);
       });
   },
+  verifyMailEntreprise: async (req, res, next) => {
+    try {
+      const { mail } = req.query;
+      const find = await Entreprise.findOne({ mail });
+      if (find)
+        res.send({
+          message: "mail",
+        });
+      else
+        res.send({
+          message: "Autentique",
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
