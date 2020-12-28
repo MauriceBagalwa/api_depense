@@ -3,6 +3,7 @@ const router = require("express").Router();
 const upload = require("../middleware/upload");
 
 router.get("/", entrepriseCtr.entreprisesOperation);
+router.get("/middleware", entrepriseCtr.verifyMailEntreprise);
 router.get("/mail", entrepriseCtr.sendEmail);
 
 router.post("/", entrepriseCtr.entreprise);
