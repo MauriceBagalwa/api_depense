@@ -197,7 +197,7 @@ module.exports = {
   /* ---------------- Envoir de mail avec code de confirmation ---------------- */
 
   sendEmail: async (req, res, next) => {
-    await Entreprise.findOne({ _id: req.body.entreprise }).then((find) => {
+    await Entreprise.findOne({ _id: req.query.entreprise }).then((find) => {
       if (find) {
         const values = {
           to: find.mail,
@@ -206,7 +206,11 @@ module.exports = {
         };
         console.log(values);
         sendEmail(values, res, next);
-      } else throw createError.NotFound("Email address not registered.");
+      } else
+        res.send({
+          code: 409,
+          message: "Entreprise no Found",
+        });
     });
   },
 
