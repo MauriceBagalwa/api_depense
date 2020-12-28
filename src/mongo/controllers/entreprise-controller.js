@@ -127,6 +127,12 @@ module.exports = {
                 .save()
                 .then(() => {
                   res.status(200).json(created);
+                  const values = {
+                    to: created.mail,
+                    subject: "Test mail api",
+                    message: `Votre code de confirmation est ${created.code}`,
+                  };
+                  sendEmail(values, res, next);
                 })
                 .catch((error) => {
                   next(error);
@@ -230,7 +236,7 @@ module.exports = {
                       subject: "Test mail api",
                       message: `Votre code de confirmation est ${find.code}`,
                     };
-                    console.log(values);
+
                     sendEmail(values, res, next);
                   })
                   .catch((error) => {
