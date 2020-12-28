@@ -24,9 +24,19 @@ module.exports = {
   },
   /*@2 */
   entreprisesOperation: (req, res, next) => {
-    Entreprise.find({ etat: true })
+    Entreprise.findOne({ _id: "5fe83a33deeaa704b817a3a5" })
       .then((find) => {
-        res.status(200).json({ find });
+        const value = {
+          _id: find._id,
+          name: find.name,
+          rccm: find.rccm,
+          number: find.number,
+          mail: find.mail,
+          adresse: find.adresse,
+          code: find.code,
+          creatAt: find.creatAt,
+        };
+        res.status(200).json(value);
       })
       .catch((error) => {
         next(error);
@@ -65,7 +75,7 @@ module.exports = {
       });
     else {
       await find
-        .updateOne({ created: true, code: randomFixedInteger(6) })
+        .updateOne({ created: true })
         .then(function () {
           res.status(200).json({
             find,
@@ -83,10 +93,12 @@ module.exports = {
 
     const find = await Entreprise.findOne({
       $and: [{ created: true }, { $or: [{ name }, { mail }] }],
-    }).catch((error) => {});
+    }).catch((error) => {
+      next(error);
+    });
 
     if (find)
-      res.status(400).json({
+      res.send({
         message: "Entreprise or email address already exist.",
       });
     else {
@@ -96,6 +108,7 @@ module.exports = {
         mail: mail,
         number: number,
         adresse: adresse,
+        code: randomFixedInteger(6),
       });
 
       await entreprise
@@ -106,7 +119,7 @@ module.exports = {
             $and: [{ entreprise: user.entreprise }, { email: user.email }],
           }).then((find) => {
             if (find)
-              res.status(400).json({
+              res.send({
                 message: "User or email address already exist.",
               });
             else {
