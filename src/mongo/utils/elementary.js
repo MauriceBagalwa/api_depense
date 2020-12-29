@@ -22,9 +22,14 @@ module.exports = {
     };
 
     tranporter.sendMail(mailOptions, function (err, info) {
-      if (err) console.log(err);
+      if (err)
+        res.send({
+          code: 400,
+          message: "mail",
+        });
       else
         res.send({
+          code: 200,
           message: `Mail send to ${info.response}`,
         });
     });
