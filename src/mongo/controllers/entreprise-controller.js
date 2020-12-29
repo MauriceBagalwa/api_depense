@@ -225,8 +225,9 @@ module.exports = {
           Entreprise.findOne({ mail })
             .then((exist) => {
               if (exist)
-                res.status(400).json({
-                  message: "Email address already exist.",
+                res.send({
+                  code: 400,
+                  message: `Email address already exist.`,
                 });
               else {
                 find
