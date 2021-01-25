@@ -2,6 +2,13 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 
+var randomFixedInteger = function (length) {
+  return Math.floor(
+    Math.pow(10, length - 1) +
+      Math.random() * (Math.pow(10, length) - Math.pow(10, length - 1) - 1)
+  );
+};
+
 const reqString = {
   type: String,
   required: true,
@@ -10,7 +17,7 @@ const reqString = {
 const fonctionSchema = new Schema({
   designation: reqString,
 });
-const entreprise = "TestEnt-0032";
+
 const UserSchema = new Schema({
   lastname: reqString,
   name: reqString,
@@ -18,8 +25,9 @@ const UserSchema = new Schema({
   number: reqString,
   email: reqString,
   password: reqString,
-  entreprise: { type: String, required: true },
-  fonctions: [fonctionSchema],
+  entreprise: reqString,
+  fonction: { type: Schema.Types.ObjectId, ref: "Function" },
+  username: { type: String, default: "@?" },
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
 });
@@ -29,6 +37,7 @@ UserSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = bcrypt.hashSync(this.password, salt);
     this.password = hashedPassword;
+    this.username = `${this.lastname}@${randomFixedInteger(4)}`;
     next();
   } catch (error) {
     next(error);
