@@ -1,10 +1,18 @@
-const User = require("../schemas/user-schema");
+const db = require("../schemas/user-schema");
+const username = require("username");
 
 module.exports = {
-  users: (req, res, next) => {
-    User.find()
+  users: async (req, res, next) => {
+    const { entreprise } = req.query;
+    await db
+      .find({ etat: true, entreprise })
+      .populate({
+        path: "fonction",
+        select: "designation",
+      })
+      .sort({ createAt: 1 })
       .then((find) => {
-        res.status(200).json(find);
+        res.send({ find });
       })
       .catch((error) => {
         next(error);
@@ -15,50 +23,84 @@ module.exports = {
        utilisateur
      */
 
-  /* ------------------------------- Createtion ------------------------------- */
+  /* ------------------------------- Creation ------------------------------- */
 
   user: async (req, res, next) => {
-    try {
-      const {
-        lastname,
-        name,
-        genre,
-        email,
-        number,
-        entreprise_,
-        fonctions,
-      } = req.body;
-      const isExist = await User.findOne({ $or: [{ lastname }, { email }] });
-      console.log(fonctions);
-      if (isExist) {
-        res.status(400).json({
-          message: "username or email address already exist",
+    const user = new db({
+      lastname: req.body.lastname,
+      name: req.body.name,
+      genre: req.body.genre,
+      email: req.body.email,
+      password: req.body.password,
+      number: req.body.number,
+      entreprise: req.body.entreprise,
+      fonction: req.body.fonction,
+    });
+
+    await user
+      .save()
+      .then(function (create) {
+        if (create) next();
+
+        // console.log(find);
+
+        // find.
+        // find.populate({ path: "fonction", select: { designation: 1 } });
+        // res.send({
+        //   find,
+        // });
+      })
+      .catch((error) => {
+        console.log(error);
+        next(error);
+      });
+  },
+  /* ------------------------------- Update user ------------------------------- */
+  upadte: async (req, res, next) => {
+    const filter = { _id: req.body._id };
+    console.log(filter);
+    const values = {
+      lastname: req.body.lastname,
+      name: req.body.name,
+      genre: req.body.genre,
+      email: req.body.email,
+      password: req.body.password,
+      number: req.body.number,
+      entreprise: req.body.entreprise,
+      fonction: req.body.fonctions,
+    };
+
+    await db
+      .findByIdAndUpdate(filter, values)
+      .then(() => {
+        res.send({
+          code: 200,
+          message: "User update succeful.",
         });
-      } else {
-        const values = new User({
-          lastname: lastname,
-          name: name,
-          genre: genre,
-          email: email,
-          password: "1234",
-          number: number,
-          entreprise_: entreprise_,
-          fonctions: fonctions,
-        });
-        await values
-          .save()
-          .then(function () {
-            res.status(200).json({
-              message: "users created.",
-            });
-          })
-          .catch((error) => {
-            console.log(error);
-            next(error);
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
+
+  /* ------------------------------ Delete a user ----------------------------- */
+  delte: async (req, res, next) => {
+    await db
+      .findByIdAndDelete({ _id: req.body._id })
+      .then((delted) => {
+        if (delted)
+          res.send({
+            code: 200,
+            message: "User deleted succeful",
           });
-      }
-    } catch (error) {
-      next(error);
-    }
+        else
+          res.send({
+            code: 409,
+            message: "User no Found.",
+          });
+      })
+      .catch((err) => {
+        next(err);
+      });
   },
 };
