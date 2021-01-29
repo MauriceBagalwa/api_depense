@@ -15,7 +15,7 @@ const reqString = {
 };
 
 const role = new Schema({
-  designation: reqString
+  designation: reqString,
 });
 
 const UserSchema = new Schema({
@@ -45,6 +45,6 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-const User = mongoose.model("users", UserSchema);
+const User = mongoose.model("Users", UserSchema);
 
 module.exports = User;
