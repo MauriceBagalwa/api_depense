@@ -24,6 +24,8 @@ app.get("/", (req, res) => {
 */
 app.use("/dep/v1/user", router.userRouter);
 app.use("/dep/v1/entreprise", router.entrepriseRouter);
+app.use("/dep/v1/function", router.functionRouter);
+app.use("/dep/v1/typeOp", router.autorization);
 // app.use("/middleware", router.middleware);
 /*
 ? Gestionnaire des Erreurs
