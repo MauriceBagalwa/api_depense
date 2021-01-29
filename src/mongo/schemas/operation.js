@@ -11,6 +11,7 @@ const userSchema = Schema({
 
 const autorizationSchema = Schema({
   designation: reqString,
+  description: reqString,
   entreprise: { type: Schema.Types.ObjectId, ref: "entreprise" },
   users: [{ type: Schema.Types.ObjectId, ref: "Users" }],
   deleted: { type: Boolean, default: false },
