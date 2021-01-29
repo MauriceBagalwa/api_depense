@@ -14,8 +14,8 @@ const reqString = {
   required: true,
 };
 
-const fonctionSchema = new Schema({
-  designation: reqString,
+const role = new Schema({
+  designation: reqString
 });
 
 const UserSchema = new Schema({
@@ -28,6 +28,7 @@ const UserSchema = new Schema({
   entreprise: reqString,
   fonction: { type: Schema.Types.ObjectId, ref: "Function" },
   username: { type: String, default: "@?" },
+  roles: [role],
   etat: { type: Boolean, default: true },
   creatAt: { type: Date, default: Date.now },
 });
