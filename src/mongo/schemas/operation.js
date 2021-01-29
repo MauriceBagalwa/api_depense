@@ -12,7 +12,7 @@ const userSchema = Schema({
 const autorizationSchema = Schema({
   designation: reqString,
   entreprise: { type: Schema.Types.ObjectId, ref: "entreprise" },
-  users: [{ type: Schema.Types.ObjectId, ref: "users" }],
+  users: [{ type: Schema.Types.ObjectId, ref: "Users" }],
   deleted: { type: Boolean, default: false },
   createAt: { type: Date, default: Date.now },
 });
