@@ -5,7 +5,7 @@ module.exports = {
   users: async (req, res, next) => {
     const { entreprise } = req.query;
     await db
-      .find({ etat: true, entreprise })
+      .find({ entreprise })
       .populate({
         path: "fonction",
         select: "designation",
@@ -35,8 +35,9 @@ module.exports = {
       number: req.body.number,
       entreprise: req.body.entreprise,
       fonction: req.body.fonction,
+      roles: req.body.roles,
     });
-
+    console.log(user);
     await user
       .save()
       .then(function (create) {
@@ -83,10 +84,31 @@ module.exports = {
       });
   },
 
+  /*#2
+   * #Modification de l'etat du compte de l'utilisateur
+   */
+  updateCount: async (req, res, next) => {
+    const filter = { _id: req.body._id };
+    const values = {
+      etat: req.body.etat,
+      fonction: req.body.fonction,
+      roles: req.body.roles,
+    };
+    console.log(values);
+    await db
+      .findByIdAndUpdate(filter, values)
+      .then((config) => {
+        next();
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
   /* ------------------------------ Delete a user ----------------------------- */
   delte: async (req, res, next) => {
+    console.log(req.query.user);
     await db
-      .findByIdAndDelete({ _id: req.body._id })
+      .findByIdAndDelete({ _id: req.query.user })
       .then((delted) => {
         if (delted)
           res.send({
