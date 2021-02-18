@@ -1,27 +1,38 @@
-const db = require("../mongo/schemas/autorization_schema");
+const db = require("../mongo/schemas/operation");
 const { use } = require("../routers/user-router");
 module.exports = {
-  isExist: async (res, req, next) => {
+  isExist: async (req, res, next) => {
+    console.log(req.body);
     const { designation, entreprise } = req.body;
-    const filtre = { designation: designation, entreprise: entreprise };
-    const values = { designation: designation, entreprise: entreprise };
     await db
-      .findOneAndUpdate({ filtre, values })
+      .findOne({ designation, entreprise })
       .then((find) => {
         if (find) {
-          const use = module.exports;
-          use.operation(req, res, next);
+          // const use = module.exports;
+          // use.operations(req, res, next);
+          res.statut(409).json({
+            message: "l'operation exist deja.",
+          });
         } else {
+          console.log("#mouveau");
           next();
         }
       })
-      .cacth((error) => {
+      .catch((error) => {
         next(error);
       });
   },
-  operation: async (res, res, next) => {
+  operations: async (req, res, next) => {
     await db
       .find({ entreprise: req.body.entreprise })
+      .populate({
+        path: "users",
+        select: "lastname name email fonction",
+        populate: {
+          path: "fonction",
+          select: "designation",
+        },
+      })
       .then((operations) => {
         res.send({
           operations,
