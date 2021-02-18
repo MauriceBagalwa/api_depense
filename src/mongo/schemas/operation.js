@@ -9,7 +9,7 @@ const userSchema = Schema({
   user: reqString,
 });
 
-const autorizationSchema = Schema({
+const operationSchema = Schema({
   designation: reqString,
   description: reqString,
   entreprise: { type: Schema.Types.ObjectId, ref: "entreprise" },
@@ -18,6 +18,6 @@ const autorizationSchema = Schema({
   createAt: { type: Date, default: Date.now },
 });
 
-const Autorization = mongoose.model("autorization", autorizationSchema);
+const Autorization = mongoose.model("Operations", operationSchema);
 
 module.exports = Autorization;
