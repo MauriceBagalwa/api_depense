@@ -1,34 +1,42 @@
-const db = require("../schemas/autorization_schema");
+const db = require("../schemas/operation");
 module.exports = {
   /* ------------------------- #selection des opération ------------------------ */
 
   Operations: async (req, res, next) => {
     await db
-      .find({ entreprise: req.body.entreprise })
-      .then((finds) => {
+      .find({ entreprise: req.query.entreprise })
+      .populate({
+        path: "users",
+        select: "lastname name email fonction",
+        populate: {
+          path: "fonction",
+          select: "designation",
+        },
+      })
+      .then((operations) => {
         res.send({
-          status: 200,
-          message: finds,
+          operations,
         });
       })
-      .catch((err) => {
-        next(err);
+      .catch((error) => {
+        next(error);
       });
   },
 
   /* ------------------- #ajout d'un nouveau type d'operation ------------------ */
 
   Operation: async (req, res, next) => {
-    const values = new db({
+    const operation = new db({
       designation: req.body.designation,
       entreprise: req.body.entreprise,
+      description: req.body.description,
       users: req.body.users,
     });
-    await values
-      .create(values)
+    await operation
+      .save()
       .then(() => {
-        const use = module.exports;
-        use.typeOperation(req, res, next);
+        console.log("#2 insertion...");
+        next();
       })
       .catch((err) => {
         next(err);
@@ -40,28 +48,32 @@ module.exports = {
   /* -------------------------------------------------------------------------- */
 
   update: async (req, res, next) => {
-    const filter = { _id: req.body._id };
-    const update = { designation: req.body.designation };
+    console.log(req.body);
+    const filter = { _id: req.body.id };
+    const update = {
+      designation: req.body.designation,
+      description: req.body.description,
+    };
     await db
       .findOneAndUpdate(filter, update, { returnOriginal: false })
       .then((updated) => {
-        res.send({
-          status: 200,
-          message: updated,
-        });
+        next();
       });
   },
 
   UpdateUser: async (req, res, next) => {
-    const filter = { _id: req.body._id };
-    const update = { users: req.body.designation };
+    console.log(req.body);
+    const filter = { _id: req.body.id };
+    const update = { users: req.body.users };
     await db
       .findOneAndUpdate(filter, update, { returnOriginal: false })
       .then((updated) => {
-        res.send({
-          status: 200,
-          message: updated,
-        });
+        if (updated) {
+          next();
+        }
+      })
+      .catch((error) => {
+        next(error);
       });
   },
 
@@ -69,12 +81,15 @@ module.exports = {
   /*                                 #Suppresion                                */
   /* -------------------------------------------------------------------------- */
   deleteOperation: async (req, res, next) => {
-    db.findByIdAndDelete(req.params._id)
-      .then(() => {
-        res.send({
-          status: 200,
-          message: "Type Operation effacer avec succès.",
-        });
+    db.findByIdAndDelete({ _id: req.query.id })
+      .then((find) => {
+        if (find) {
+          console.log(find);
+          res.send({
+            status: 200,
+            message: "Type Operation effacer avec succès.",
+          });
+        }
       })
       .catch((err) => {
         next(err);
