@@ -49,7 +49,6 @@ module.exports = {
         message: "The designation already exists",
       });
     else {
-      const use = module.exports;
       const newfunction = new db({
         entreprise: entreprise,
         designation: designation,
