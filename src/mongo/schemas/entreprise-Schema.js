@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { sendEmail } = require("../utils/elementary");
+
 const reqString = {
   type: String,
   required: true,
@@ -12,6 +12,15 @@ const NumberSchema = new Schema({
 const locationSchema = new Schema({
   adress: reqString,
 });
+const deviceSchema = new Schema({
+  designation: { type: String },
+  symbole: { type: String },
+  taux: { type: Number },
+});
+const contrydeviceSchema = new Schema({
+  designation: reqString,
+  symbole: reqString,
+});
 
 const EntrepriseSchema = new Schema({
   name: reqString,
@@ -19,6 +28,8 @@ const EntrepriseSchema = new Schema({
   mail: reqString,
   number: reqString,
   adresse: reqString,
+  contrydevice: contrydeviceSchema,
+  devices: [deviceSchema],
   created: { type: Boolean, default: false },
   code: { type: String, default: "-" },
   etat: { type: Boolean, default: true },
@@ -37,6 +48,6 @@ const EntrepriseSchema = new Schema({
 
 // const user = await User.updateOne({ _id: req.params.id }, req.body);
 
-const Entreprise = mongoose.model("entreprise", EntrepriseSchema);
+const Entreprise = mongoose.model("Entreprise", EntrepriseSchema);
 
 module.exports = Entreprise;

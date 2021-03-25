@@ -1,4 +1,5 @@
 const db = require("../schemas/operation");
+const { upadte } = require("./user-controller");
 module.exports = {
   /* ------------------------- #selection des opération ------------------------ */
 
@@ -30,6 +31,7 @@ module.exports = {
       designation: req.body.designation,
       entreprise: req.body.entreprise,
       description: req.body.description,
+      type: req.body.type,
       users: req.body.users,
     });
     await operation
@@ -53,6 +55,7 @@ module.exports = {
     const update = {
       designation: req.body.designation,
       description: req.body.description,
+      type: req.body.type,
     };
     await db
       .findOneAndUpdate(filter, update, { returnOriginal: false })
@@ -62,13 +65,13 @@ module.exports = {
   },
 
   UpdateUser: async (req, res, next) => {
-    console.log(req.body);
     const filter = { _id: req.body.id };
     const update = { users: req.body.users };
     await db
       .findOneAndUpdate(filter, update, { returnOriginal: false })
       .then((updated) => {
         if (updated) {
+          req.body = updated.entreprise;
           next();
         }
       })

@@ -2,33 +2,48 @@ POST http://localhost:3000/dep/v1/user
 Content-Type: application/json
 
 {
-    "lastname":"Bin12",
-    "name":"Maurie3",
+    "lastname":"Simon",
+    "name":"kahumba",
     "genre":"Homme",
-    "email":"mauricebagalwa08@gmail.com",
+    "email":"sims@gmail.com",
     "password":"1234",
-    "entreprise_":"R01267-A",
-    "fonctions":[{"designation":"admin"},{"designation":"comptable"}]
+    "number":"+24374858578",
+    "entreprise":"5feb21237279c700172ec5e7",
+    "fonction":"6009ee1f84bdc7329c675e42"
 }
 ###
-GET http://localhost:3000/dep/v1/user
-
-/* -------------------------------------------------------------------------- */
-/*                                 Entreprise                                 */
-/* -------------------------------------------------------------------------- */
-
-###
-GET http://localhost:3000/dep/v1/entreprise
-###
-POST http://localhost:3000/dep/v1/entreprise
+PUT http://localhost:3000/dep/v1/user/psswd
 Content-Type: application/json
 
 {
-    "name":"SmartTicker",
-    "rccm":"387-4890-097",
-    "mail":"mauricebagalwa08@gmail.com",
-    "numbers":[{"number":"+243999026735"}],
-    "adresses":[{"adress":"Av bobiladawa N45"}]
+  "_id":"60348e69d9926e426c089f99",
+  "ancien":"123456",
+  "password":"1234567"
+}
+###
+GET http://localhost:3000/dep/v1/user
+Content-Type: application/json
+
+{
+
+  "entreprise":"603e7b188c5cd52d48017f83"
+
+}
+###
+GET http://localhost:3000/dep/v1/entreprise
+###
+PUT http://localhost:3000/dep/v1/entreprise
+Content-Type: application/json
+
+{
+  "_id":"600ebfe9d966a4263cd5494e",
+    "name":"Queen Mocor la grande",
+    "rccm":"CD/GOM/RCCM/19-C-0014",
+    "mail":"queenmocor@gmail.com",
+    "number":"+243999026735",
+    "adresse":"Av bobiladawa",
+    "contrydevice":"CDF",
+    "devices":
 }
 ###
 PUT  http://localhost:3000/dep/v1/entreprise
@@ -37,4 +52,88 @@ Content-Type:  application/json
 {
     "_id":"5fddc84173e31h538c0a593de",
     "mail":"bin243@gmail.com"
+}
+
+### 
+GET http://localhost:3000/dep/v1/typeOp
+
+
+###
+POST http://localhost:3000/dep/v1/typeOp
+Content-Type: application/json
+
+{
+    "designation":"",
+    "_entreprise":"5feb2b4020b2e900172c5480",
+    "_users":[{
+        "5fece58345622d1698493428"
+    }]
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Fonctions                                 */
+/* -------------------------------------------------------------------------- */
+###
+GET http://localhost:3000/dep/v1/function/refresh
+Content-Type: application/json
+
+{
+  "entreprise": "5feb21237279c700172ec5e7"
+}
+###
+POST http://localhost:3000/dep/v1/function
+Content-Type: application/json
+
+{
+  "entreprise": "5feb21237279c700172ec5e7",
+  "designation": "test 0014",
+  "description": "test 07 is a function"
+}
+###
+GET http://localhost:3000/dep/v1/function
+Content-Type: application/json
+
+{
+  "entreprise": "drf",
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Operation                                 */
+/* -------------------------------------------------------------------------- */
+###
+GET http://localhost:3000/dep/v1/operation
+Content-Type: application/json
+
+{
+   "entreprise": "600ebfe9d966a4263cd5494e"
+}
+###
+POST http://localhost:3000/dep/v1/operation
+Content-Type: application/json
+
+{
+  "id": "602a6d15ea18020e60b9f3ab",
+}
+###
+GET http://localhost:3000/dep/v1/trans
+Content-Type: application/json
+
+{
+  "entreprise": "603f42acc0b0bf1b54fd5b7e"
+}
+###
+GET http://localhost:3000/dep/v1/trans/notif
+Content-Type: application/json
+
+{
+  "entreprise": "603f42acc0b0bf1b54fd5b7e",
+  "user":"603f42acc0b0bf1b54fd5b81"
+}
+###
+POST http://localhost:3000/dep/v1/trans/valid
+Content-Type: application/json
+
+{
+  "_id": "6045fd69a62c3f38e4c9ee14",
+  "user":"603f42acc0b0bf1b54fd5b81"
 }

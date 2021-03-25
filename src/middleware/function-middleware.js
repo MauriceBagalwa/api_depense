@@ -19,9 +19,14 @@ module.exports = {
       });
   },
   isExistUpdate: async (req, res, next) => {
+    console.log(req.body);
     const { entreprise, designation, description } = req.body;
     await db
-      .findOne({ entreprise, designation, description })
+      .findOne({
+        entreprise,
+        $or: [{ designation }, { description }],
+        _id: { $ne: req.body._id },
+      })
       .then((find) => {
         if (find) {
           res.status(409).json({

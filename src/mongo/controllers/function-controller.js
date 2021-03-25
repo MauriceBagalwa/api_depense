@@ -4,13 +4,20 @@ module.exports = {
 
   functions: async (req, res, next) => {
     const { entreprise } = req.query;
+    console.log(entreprise);
     await db
       .find({ deleted: false, entreprise })
       .then((find) => {
-        res.send({
-          code: 200,
-          result: find,
-        });
+        if (find) {
+          res.status(200).json({
+            code: 200,
+            result: find,
+          });
+        } else {
+          res.status(400).json({
+            result: "Entreprise not found.",
+          });
+        }
       })
       .catch((err) => {
         next(err);

@@ -12,6 +12,7 @@ const userSchema = Schema({
 const operationSchema = Schema({
   designation: reqString,
   description: reqString,
+  type:reqString,
   entreprise: { type: Schema.Types.ObjectId, ref: "entreprise" },
   users: [{ type: Schema.Types.ObjectId, ref: "Users" }],
   deleted: { type: Boolean, default: false },

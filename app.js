@@ -26,6 +26,7 @@ app.use("/dep/v1/user", router.userRouter);
 app.use("/dep/v1/entreprise", router.entrepriseRouter);
 app.use("/dep/v1/function", router.functionRouter);
 app.use("/dep/v1/operation", router.operation);
+app.use("/dep/v1/trans", router.transaction);
 // app.use("/middleware", router.middleware);
 /*
 ? Gestionnaire des Erreurs
@@ -76,6 +77,7 @@ app.use((err, req, res, next) => {
 //   }
 // });
 /*
+
 ? Sendted mail
 */
 app.listen(PORT, () => {

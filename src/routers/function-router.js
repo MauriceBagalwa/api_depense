@@ -6,7 +6,7 @@ router.get("/", functionCtr.functions);
 router.get("/refresh", functionCtr.refrech);
 router.post("/", middleware.isExist, functionCtr.function);
 
-router.put("/", middleware.isExist, functionCtr.update);
+router.put("/", middleware.isExistUpdate, functionCtr.update);
 router.delete("/", middleware.isExist, functionCtr.delete);
 
 module.exports = router;

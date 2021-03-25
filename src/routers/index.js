@@ -3,6 +3,7 @@ const entrepriseRouter = require("./entreprise-router");
 const middleware = require("./middleware");
 const functionRouter = require("./function-router");
 const operation = require("./operation");
+const transaction = require("./transaction");
 
 module.exports = {
   userRouter,
@@ -10,4 +11,5 @@ module.exports = {
   middleware,
   functionRouter,
   operation,
+  transaction,
 };

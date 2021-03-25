@@ -25,7 +25,7 @@ const UserSchema = new Schema({
   number: reqString,
   email: reqString,
   password: reqString,
-  entreprise: reqString,
+  entreprise: { type: Schema.Types.ObjectId, ref: "Entreprise" },
   fonction: { type: Schema.Types.ObjectId, ref: "Function" },
   username: { type: String, default: "@?" },
   roles: [role],
@@ -46,5 +46,7 @@ UserSchema.pre("save", async function (next) {
 });
 
 const User = mongoose.model("Users", UserSchema);
-
+User.prototype.comparePassword = function comparePassword(password) {
+  return bcrypt.compareSync(password, this.password);
+};
 module.exports = User;

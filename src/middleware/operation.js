@@ -3,9 +3,9 @@ const { use } = require("../routers/user-router");
 module.exports = {
   isExist: async (req, res, next) => {
     console.log(req.body);
-    const { designation, entreprise } = req.body;
+    const { designation, entreprise, description } = req.body;
     await db
-      .findOne({ designation, entreprise })
+      .findOne({ designation, entreprise, description })
       .then((find) => {
         if (find) {
           // const use = module.exports;

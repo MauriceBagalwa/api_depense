@@ -1,7 +1,25 @@
 const db = require("../schemas/user-schema");
 const username = require("username");
-
+const { SendGridUserMail } = require("../utils/elementary");
 module.exports = {
+  signin: async (req, res, next) => {
+    const { username } = req.body;
+    await db
+      .findOne({ username })
+      .then((find) => {
+        if (find) {
+          req.body = find;
+          next();
+        } else {
+          res.status(400).json({
+            message: "user or password incorrect",
+          });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  },
   users: async (req, res, next) => {
     const { entreprise } = req.query;
     await db
@@ -10,9 +28,23 @@ module.exports = {
         path: "fonction",
         select: "designation",
       })
+      // .populate("entreprise")
       .sort({ createAt: 1 })
       .then((find) => {
         res.send({ find });
+      })
+      .catch((error) => {
+        next(error);
+      });
+  },
+  userwithId: async (req, res, next) => {
+    const { entreprise, email } = req.body;
+    await db
+      .findOne({ entreprise, email })
+      .sort({ createAt: 1 })
+      .then((find) => {
+        req.body = find;
+        next();
       })
       .catch((error) => {
         next(error);
@@ -37,19 +69,14 @@ module.exports = {
       fonction: req.body.fonction,
       roles: req.body.roles,
     });
-    console.log(user);
+
     await user
       .save()
       .then(function (create) {
-        if (create) next();
-
-        // console.log(find);
-
-        // find.
-        // find.populate({ path: "fonction", select: { designation: 1 } });
-        // res.send({
-        //   find,
-        // });
+        if (create) {
+          req.body = create;
+          next();
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -60,16 +87,7 @@ module.exports = {
   upadte: async (req, res, next) => {
     const filter = { _id: req.body._id };
     console.log(filter);
-    const values = {
-      lastname: req.body.lastname,
-      name: req.body.name,
-      genre: req.body.genre,
-      email: req.body.email,
-      password: req.body.password,
-      number: req.body.number,
-      entreprise: req.body.entreprise,
-      fonction: req.body.fonctions,
-    };
+    const values = req.body;
 
     await db
       .findByIdAndUpdate(filter, values)
@@ -124,5 +142,14 @@ module.exports = {
       .catch((err) => {
         next(err);
       });
+  },
+  Usermail: async (req, res, next) => {
+    const { username, email, entreprise } = req.body;
+    const values = {
+      username,
+      email,
+      entreprise,
+    };
+    SendGridUserMail(values, res, next);
   },
 };

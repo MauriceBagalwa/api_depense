@@ -4,9 +4,17 @@ const middleware = require("../middleware/user-middleware");
 
 router.get("/", userController.users);
 
-router.post("/", middleware.userExist, userController.user, middleware.getUser);
+router.post(
+  "/",
+  middleware.userExist,
+  userController.user,
+  userController.Usermail,
+  middleware.getUser
+);
+router.post("/signin", userController.signin, middleware.getUserID);
 
-router.put("/", userController.upadte);
+router.put("/", middleware.userExist, userController.upadte);
+router.put("/psswd", middleware.comparePsswd);
 router.put("/config", userController.updateCount, middleware.getUser);
 
 router.delete("/", userController.delte);

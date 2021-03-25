@@ -1,7 +1,11 @@
 const Entreprise = require("../schemas/entreprise-Schema");
 const UserSchema = require("../schemas/user-schema");
 const createError = require("http-errors");
-const { sendEmail } = require("../utils/elementary");
+const {
+  sendEmail,
+  SendGridMail,
+  SendGridUserMail,
+} = require("../utils/elementary");
 
 var randomFixedInteger = function (length) {
   return Math.floor(
@@ -14,82 +18,97 @@ module.exports = {
   /* --------------------------- get all entreprise --------------------------- */
   /*@1 */
   entreprises: (req, res, next) => {
+    // const { _id } = req.query;
     Entreprise.find()
       .then((find) => {
-        res.status(200).json({ find });
+        res.status(200).json(find);
       })
       .catch((error) => {
         next(error);
       });
   },
   /*@2 */
-  entreprisesOperation: (req, res, next) => {
-    Entreprise.findOne({ _id: "5fe83a33deeaa704b817a3a5" })
-      .then((find) => {
-        const value = {
-          _id: find._id,
-          name: find.name,
-          rccm: find.rccm,
-          number: find.number,
-          mail: find.mail,
-          adresse: find.adresse,
-          code: find.code,
-          creatAt: find.creatAt,
+  // entreprisesOperation: (req, res, next) => {
+  //   Entreprise.findOne({ _id: "5fe83a33deeaa704b817a3a5" })
+  //     .then((find) => {
+  //       const value = {
+  //         _id: find._id,
+  //         name: find.name,
+  //         rccm: find.rccm,
+  //         number: find.number,
+  //         mail: find.mail,
+  //         adresse: find.adresse,
+  //         code: find.code,
+  //         creatAt: find.creatAt,
+  //       };
+  //       res.status(200).json(value);
+  //     })
+  //     .catch((error) => {
+  //       next(error);
+  //     });
+  // },
+  /* ------------------------ update data of entreprise ----------------------- */
+  updateEntreprise: (req, res, next) => {
+    const filter = { _id: req.body._id };
+    const values = {
+      name: req.body.name,
+      rccm: req.body.rccm,
+      mail: req.body.mail,
+      number: req.body.number,
+      adresse: req.body.adresse,
+    };
+    Entreprise.findOneAndUpdate(filter, values)
+      .then((updated) => {
+        res.status(200).json(updated);
+      })
+      .catch((error) => {
+        next(error);
+      });
+
+    // console.log(values);
+    // Entreprise.findById(values._id).then((find) => {
+    //   if (!find)
+    //     res.status(400).json({
+    //       message: "Entreprise no Found.",
+    //     });
+    //   else {
+    //     find
+    //       .update(values)
+    //       .then((updated) => {
+    //         res.status(200).json({
+    //           message: "Data update.",
+    //           updated,
+    //         });
+    //       })
+    //       .catch((error) => {
+    //         next(error);
+    //       });
+    //   }
+    // });
+  },
+
+  changeEtat: async (req, res, next) => {
+    const filter = { _id: req.body.entreprise };
+    const values = { created: true };
+    const { username, _id, email } = req.body;
+
+    await Entreprise.findByIdAndUpdate(filter, values)
+      .then((update) => {
+        const values = {
+          username,
+          email,
+          _id,
         };
-        res.status(200).json(value);
+        SendGridUserMail(values, res, next);
       })
       .catch((error) => {
         next(error);
       });
   },
-  /* ------------------------ update data of entreprise ----------------------- */
-  updateEntreprise: (req, res, next) => {
-    const values = req.body;
-    console.log(values);
-    Entreprise.findById(values._id).then((find) => {
-      if (!find)
-        res.status(400).json({
-          message: "Entreprise no Found.",
-        });
-      else {
-        find
-          .update(values)
-          .then((updated) => {
-            res.status(200).json({
-              message: "Data update.",
-              updated,
-            });
-          })
-          .catch((error) => {
-            next(error);
-          });
-      }
-    });
-  },
-
-  changeEtat: async (entreprise, res, next) => {
-    const find = await Entreprise.findById((_id = entreprise));
-    if (!find)
-      res.status(200).json({
-        message: "Entreprise not created",
-      });
-    else {
-      await find
-        .updateOne({ created: true })
-        .then(function () {
-          res.status(200).json({
-            find,
-          });
-        })
-        .catch((error) => {
-          next(error);
-        });
-    }
-  },
   /* --------------------------- add new entreprise --------------------------- */
 
   entreprise: async (req, res, next) => {
-    const { name, rccm, mail, number, adresse, user } = req.body;
+    const { name, rccm, mail, number, adresse, user, contrydevice } = req.body;
 
     const find = await Entreprise.findOne({
       $and: [{ created: true }, { $or: [{ name }, { mail }] }],
@@ -108,6 +127,7 @@ module.exports = {
         mail: mail,
         number: number,
         adresse: adresse,
+        contrydevice: contrydevice,
         code: randomFixedInteger(6),
       });
 
@@ -115,30 +135,8 @@ module.exports = {
         .save()
         .then((created) => {
           user.entreprise = created._id;
-          UserSchema.findOne({
-            $and: [{ entreprise: user.entreprise }, { email: user.email }],
-          }).then((find) => {
-            if (find)
-              res.send({
-                message: "User or email address already exist.",
-              });
-            else {
-              new UserSchema(user)
-                .save()
-                .then(() => {
-                  const values = {
-                    to: created.mail,
-                    subject: "Test mail api",
-                    message: `Votre code de confirmation est ${created.code}`,
-                  };
-                  sendEmail(values, res, next);
-                  res.status(200).json(created);
-                })
-                .catch((error) => {
-                  next(error);
-                });
-            }
-          });
+          req.body = user;
+          next();
         })
         .catch((error) => {
           next(error);
@@ -174,16 +172,15 @@ module.exports = {
   },
 
   /* ------------------------ verify code confirmation ------------------------ */
+
   verifyCode: async (req, res, next) => {
-    console.log(req.body);
     await Entreprise.findOne({
       _id: req.body.entreprise,
       code: req.body.code,
     })
       .then((verify) => {
         if (verify) {
-          const use = module.exports;
-          use.changeEtat(verify._id, res, next);
+          next();
         } else
           res.status(400).json({
             message: "Incorrect code.",
@@ -197,21 +194,39 @@ module.exports = {
   /* ---------------- Envoir de mail avec code de confirmation ---------------- */
 
   sendEmail: async (req, res, next) => {
-    await Entreprise.findOne({ _id: req.query.entreprise }).then((find) => {
+    await Entreprise.findOne({ _id: req.body.entreprise }).then((find) => {
       if (find) {
         const values = {
           to: find.mail,
           subject: "Test mail api",
           message: `Votre code de confirmation est ${find.code}`,
         };
-        console.log(values);
+
         sendEmail(values, res, next);
       } else
         res.send({
-          code: 409,
+          code: 400,
           message: "Entreprise no Found",
         });
     });
+  },
+  Email: async (req, res, next) => {
+    const { entreprise } = req.body;
+    await Entreprise.findOne({ _id: entreprise })
+      .then((find) => {
+        if (find) {
+          const values = {
+            mail: find.mail,
+            code: find.code,
+            entreprise: find._id,
+          };
+
+          SendGridMail(values, res, next);
+        }
+      })
+      .catch((error) => {
+        next(error);
+      });
   },
 
   /* -------------------------- Modification du mail -------------------------- */
@@ -234,12 +249,12 @@ module.exports = {
                   .updateOne({ mail })
                   .then((updated) => {
                     const values = {
-                      to: mail,
-                      subject: "Test mail api",
-                      message: `Votre code de confirmation est ${find.code}`,
+                      mail: find.mail,
+                      code: find.code,
+                      entreprise: find._id,
                     };
 
-                    sendEmail(values, res, next);
+                    SendGridMail(values, res, next);
                   })
                   .catch((error) => {
                     res.status(400).json({
@@ -276,6 +291,98 @@ module.exports = {
         });
     } catch (error) {
       console.log(error);
+    }
+  },
+  Devise: async (req, res, next) => {
+    const { designation, symbole, taux, entreprise } = req.body;
+    const find = await Entreprise.findOne({
+      _id: entreprise,
+    });
+
+    if (find) {
+      const devices = find.devices;
+      if (
+        devices.find(
+          (value) =>
+            value.designation == designation || value.symbole == symbole
+        )
+      ) {
+        res.status(409).json({
+          message: "Designation or symbole is already exist.",
+        });
+      } else {
+        const newdevise = {
+          designation,
+          symbole,
+          taux,
+        };
+        devices.push(newdevise);
+
+        const filter = {
+          _id: entreprise,
+        };
+        const update = {
+          devices,
+        };
+        await Entreprise.findOneAndUpdate(filter, update, {
+          new: true,
+        })
+          .then((find) => {
+            if (find) {
+              res.status(200).json(find);
+            }
+          })
+          .catch((error) => {
+            next(error);
+          });
+      }
+    } else {
+      res.send({
+        message: "Entreprise not Found.",
+        find,
+      });
+    }
+  },
+  DeleDevise: async (req, res, next) => {
+    const { id, entreprise } = req.query;
+    console.log(req.query);
+    const find = await Entreprise.findOne({
+      _id: entreprise,
+    });
+
+    if (find) {
+      const devices = find.devices;
+
+      if (id > -1) {
+        devices.splice(id, 1);
+        console.log(devices);
+        const filter = {
+          _id: entreprise,
+        };
+        const update = {
+          devices,
+        };
+        await Entreprise.findOneAndUpdate(filter, update, {
+          new: true,
+        })
+          .then((find) => {
+            if (find) {
+              res.status(200).json(find);
+            }
+          })
+          .catch((error) => {
+            next(error);
+          });
+      } else {
+        res.send({
+          message: "devise not Found.",
+        });
+      }
+    } else {
+      res.send({
+        message: "Entreprise not Found.",
+        find,
+      });
     }
   },
 };
