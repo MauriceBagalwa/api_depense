@@ -36,8 +36,8 @@ module.exports = {
     });
     await operation
       .save()
-      .then(() => {
-        console.log("#2 insertion...");
+      .then((saved) => {
+        req.body = saved.entreprise;
         next();
       })
       .catch((err) => {
@@ -60,6 +60,7 @@ module.exports = {
     await db
       .findOneAndUpdate(filter, update, { returnOriginal: false })
       .then((updated) => {
+        req.body = updated.entreprise;
         next();
       });
   },
