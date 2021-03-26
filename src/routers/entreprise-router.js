@@ -7,7 +7,7 @@ const userCtr = require("../mongo/controllers/user-controller");
 
 router.get("/", entrepriseCtr.entreprises);
 router.get("/middleware", entrepriseCtr.verifyMailEntreprise);
-router.post("/mail", entrepriseCtr.Email);
+router.post("/mail", entrepriseCtr.EmailQuery);
 
 router.post(
   "/",

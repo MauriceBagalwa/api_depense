@@ -211,6 +211,29 @@ module.exports = {
     });
   },
   Email: async (req, res, next) => {
+    const { entreprise } = req.body;
+    await Entreprise.findOne({ _id: entreprise })
+      .then((find) => {
+        if (find) {
+          const values = {
+            mail: find.mail,
+            code: find.code,
+            entreprise: find._id,
+          };
+          SendGridMail(values, res, next);
+        } else {
+          console.log("Entreprise no found.");
+          res.status(400).json({
+            status: 400,
+            message: "Entreprise no found.",
+          });
+        }
+      })
+      .catch((error) => {
+        next(error);
+      });
+  },
+  EmailQuery: async (req, res, next) => {
     const { entreprise } = req.query;
     await Entreprise.findOne({ _id: entreprise })
       .then((find) => {
