@@ -4,6 +4,7 @@ const { SendGridUserMail } = require("../utils/elementary");
 module.exports = {
   signin: async (req, res, next) => {
     const { username } = req.body;
+    console.log(username);
     await db
       .findOne({ username })
       .then((find) => {

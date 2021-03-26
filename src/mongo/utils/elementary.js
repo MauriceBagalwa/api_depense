@@ -53,7 +53,6 @@ module.exports = {
     }
   },
   SendGridMail: async (req, res, next) => {
-    console.log(req);
     const { entreprise, mail, code } = req;
     client_
       .send({
@@ -70,12 +69,19 @@ module.exports = {
           code: code,
         },
       })
-      .then(() => {
-        res.send({
-          entreprise: entreprise,
-          mail: mail,
-          code: code,
-        });
+      .then((send) => {
+        if (send) {
+          res.send({
+            entreprise: entreprise,
+            mail: mail,
+            code: code,
+          });
+        } else {
+          res.status(400).json({
+            status: 400,
+            message: "Mail non envoyer.",
+          });
+        }
       })
       .catch((error) => {
         console.log(error);

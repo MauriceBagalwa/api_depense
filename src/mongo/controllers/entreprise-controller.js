@@ -211,7 +211,7 @@ module.exports = {
     });
   },
   Email: async (req, res, next) => {
-    const { entreprise } = req.body;
+    const { entreprise } = req.query;
     await Entreprise.findOne({ _id: entreprise })
       .then((find) => {
         if (find) {
@@ -220,8 +220,13 @@ module.exports = {
             code: find.code,
             entreprise: find._id,
           };
-
           SendGridMail(values, res, next);
+        } else {
+          console.log("Entreprise no found.");
+          res.status(400).json({
+            status: 400,
+            message: "Entreprise no found.",
+          });
         }
       })
       .catch((error) => {
