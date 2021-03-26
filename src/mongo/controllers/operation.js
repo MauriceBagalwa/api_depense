@@ -72,6 +72,7 @@ module.exports = {
       .then((updated) => {
         if (updated) {
           req.body = updated.entreprise;
+          console.log(updated);
           next();
         }
       })
