@@ -23,6 +23,7 @@ module.exports = {
       });
   },
   operations: async (req, res, next) => {
+    console.log(req.body.entreprise);
     await db
       .find({ entreprise: req.body.entreprise })
       .populate({
