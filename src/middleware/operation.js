@@ -1,18 +1,19 @@
 const db = require("../mongo/schemas/operation");
 const { use } = require("../routers/user-router");
+const controller = require("../mongo/controllers/operation");
 module.exports = {
   isExist: async (req, res, next) => {
     console.log(req.body);
-    const { designation, entreprise, description } = req.body;
+    const { id, designation, entreprise, description, type } = req.body;
+
     await db
-      .findOne({ designation, entreprise, description })
+      // .findOne({ designation, entreprise, description })
+      .findOne({
+        $and: [{ designation }, { entreprise }, { _id: { $ne: id } }],
+      })
       .then((find) => {
         if (find) {
-          // const use = module.exports;
-          // use.operations(req, res, next);
-          res.statut(409).json({
-            message: "l'operation exist deja.",
-          });
+          res.status(409).json({ message: "Operation already Exist." });
         } else {
           console.log("#mouveau");
           next();

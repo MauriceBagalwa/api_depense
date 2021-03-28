@@ -373,7 +373,6 @@ module.exports = {
   },
   DeleDevise: async (req, res, next) => {
     const { id, entreprise } = req.query;
-    console.log(req.query);
     const find = await Entreprise.findOne({
       _id: entreprise,
     });

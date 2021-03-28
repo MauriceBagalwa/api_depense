@@ -1,6 +1,6 @@
 const db = require("../schemas/transaction");
 const operation_ = require("../schemas/operation");
-const { findOne } = require("../schemas/transaction");
+const moment = require("moment");
 
 function findIndexByProperty(data, value) {
   for (var i = 0; i < data.length; i++) {
@@ -9,6 +9,16 @@ function findIndexByProperty(data, value) {
     }
   }
   return data;
+}
+
+function Finished(data) {
+  let do_ = 0;
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].etat == true) {
+      do_++;
+    }
+  }
+  return do_ == data.length;
 }
 
 module.exports = {
@@ -85,7 +95,6 @@ module.exports = {
     const { entreprise, user } = req.query;
 
     await db
-
       .find({ $and: [{ entreprise: entreprise }, { "users.user": user }] })
       .populate({
         path: "operation",
@@ -145,6 +154,7 @@ module.exports = {
     if (trans) {
       const value = {
         users: findIndexByProperty(trans.users, user),
+        etat: Finished(trans.users),
       };
       await trans
         .update(value)
@@ -158,6 +168,43 @@ module.exports = {
       //
     } else {
       res.status(400).json({ message: "Entreprise not Found." });
+    }
+  },
+  /* -------------------------------- DashBord -------------------------------- */
+  DashData: async (req, res, next) => {
+    const { entreprise } = req.body;
+
+    // let dte = moment().subtract(2, "days").calendar();
+    // let today = moment(dte).format();
+    // let today = moment().format();
+    // let dash = await db.find({ entreprise, etat: true });
+    // var today = new Date().toISOString();
+
+    var today = new Date();
+    today.setDate(today.getDate() - 7);
+
+    let dash = await db.find(
+      {
+        entreprise,
+        etat: true,
+        createAt: { $gte: new Date(today) },
+      },
+      {
+        $group: {
+          "_id":{ $createAt: "$createAt" },
+        },
+      }
+    );
+
+    if (dash) {
+      res.status(200).json({
+        dash,
+        date: today,
+      });
+    } else {
+      res.status(400).json({
+        message: "someThing went wrong.",
+      });
     }
   },
 };

@@ -57,12 +57,11 @@ module.exports = {
       description: req.body.description,
       type: req.body.type,
     };
-    await db
-      .findOneAndUpdate(filter, update, { returnOriginal: false })
-      .then((updated) => {
-        req.body = updated.entreprise;
-        next();
-      });
+    await db.findOneAndUpdate(filter, update).then((updated) => {
+      req.body = updated.entreprise;
+      console.log(req.body);
+      next();
+    });
   },
 
   UpdateUser: async (req, res, next) => {
@@ -73,7 +72,6 @@ module.exports = {
       .then((updated) => {
         if (updated) {
           req.body = updated.entreprise;
-          console.log(updated);
           next();
         }
       })
